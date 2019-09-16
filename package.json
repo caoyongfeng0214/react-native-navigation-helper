@@ -1,0 +1,22 @@
+{
+  "name": "react-native-navigation-helper",
+  "version": "0.1.0",
+  "description": "easy to use react-native-navigation.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caoyongfeng0214/react-native-navigation-helper.git"
+  },
+  "keywords": [
+    "react-native-navigation"
+  ],
+  "author": "me@caoyongfeng.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/caoyongfeng0214/react-native-navigation-helper/issues"
+  },
+  "homepage": "https://github.com/caoyongfeng0214/react-native-navigation-helper#readme"
+}
