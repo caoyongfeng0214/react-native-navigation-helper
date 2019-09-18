@@ -41,8 +41,6 @@ if(!React.Component.$_ISCOMP){
         constructor(props){
             super(props);
             if(props && props.$href && !(props.$href_)){
-                // console.log('000000');
-                // console.log(this);
                 this.render = () => {
                     let command = props.$href;
                     if(typeof(command) == 'string'){
@@ -57,8 +55,12 @@ if(!React.Component.$_ISCOMP){
                         command.type = 'push';
                     }
                     if(command.type == 'push'){
-                        if(!command.target.props.$layout || !command.target.props.$layout.isInStack){
-                            command.type = 'overlay';
+                        if(typeof(command.target) === 'string'){
+
+                        }else{
+                            if(!command.target.props.$layout || !command.target.props.$layout.isInStack){
+                                command.type = 'overlay';
+                            }
                         }
                     }
                     return <this.constructor {...props} $href_={props.$href} onPress={()=>$Nav.go(command)}/>;
@@ -75,11 +77,7 @@ if(!React.Component.$_ISCOMP){
 
 Navigation.setDefaultOptions({
     topBar: {
-        visible: false,
-        // drawBehind: true,
-        // transparent: true,
-        // translucent: true,
-        // background: { color: '#ffffff' }
+        animate: true
     },
     animations: {
         push: {
@@ -110,7 +108,7 @@ Navigation.setDefaultOptions({
                 }
             },
             topBar:{
-                // visible:false
+                // visible:false,
                 x: {
                     from: 0,
                     to: 1000,
@@ -129,8 +127,28 @@ global.$Nav = {
     Page: Page
 };
 
+$Nav.nav = Navigation;
+
 let _regComp = function(k, comp){
     Navigation.registerComponent(k, () => comp);
+};
+
+let _comp_id = 0;
+let _findComp = function(obj, re){
+    if(!re){
+        re = {};
+    }
+    if(obj.stack){
+        re.stack = obj.stack;
+        _findComp(re.stack, re);
+    }else if(obj.component){
+        re.component = obj.component;
+    }else{
+        for(var k in obj){
+            _findComp(obj[k], re);
+        }
+    }
+    return re;
 };
 
 let sortOutLayout = function(layout, isInStack){
@@ -141,15 +159,96 @@ let sortOutLayout = function(layout, isInStack){
     } else if(layout instanceof Object){
         for(let k in layout){
             let obj = layout[k];
+            if(k == 'component' || k == 'stack'){
+                if(!obj.id){
+                    obj.id = k + '_' + (_comp_id++);
+                }
+            }else if(k == 'sideMenu'){
+                let _left = obj.left, _center = obj.center, _right = obj.right,
+                    _leftComp = undefined, _centerObj = undefined, _centerO = undefined, _rightComp = undefined;
+                if(_left){
+                    _leftComp = _left.component;
+                }
+                if(_right){
+                    _rightComp = _right.component;
+                }
+                if(_center){
+                    _centerObj = _findComp(_center);
+                }
+                if(_leftComp){
+                    if(!_leftComp.id){
+                        _leftComp.id = 'sideMenuLeft_' + (_comp_id++);
+                    }
+                }
+                if(_rightComp){
+                    if(!_rightComp.id){
+                        _rightComp.id = 'sideMenuRight_' + (_comp_id++);
+                    }
+                }
+                if(_centerObj){
+                    if(_centerObj.stack){
+                        if(!_centerObj.stack.id){
+                            _centerObj.stack.id = 'sideMenuCenterStack_' + (_comp_id++);
+                        }
+                    }
+                    if(_centerObj.component){
+                        if(!_centerObj.component.id){
+                            _centerObj.component.id = 'sideMenuCenterStack_' + (_comp_id++);
+                        }
+                    }
+                    _centerO = _centerObj.statck || _centerObj.component;
+                }
+                if(_leftComp){
+                    if(!_leftComp.passProps){
+                        _leftComp.passProps = {};
+                    }
+                    if(!_leftComp.passProps.$layout){
+                        _leftComp.passProps.$layout = {};
+                    }
+                    _leftComp.passProps.$layout.type = 'sideMenuLeft';
+                    if(_centerO){
+                        _leftComp.passProps.$layout.centerId = _centerO.id;
+                    }
+                }
+                if(_rightComp){
+                    if(!_rightComp.passProps){
+                        _rightComp.passProps = {};
+                    }
+                    if(!_rightComp.passProps.$layout){
+                        _rightComp.passProps.$layout = {};
+                    }
+                    _rightComp.passProps.$layout.type = 'sideMenuRight';
+                    if(_centerO){
+                        _rightComp.passProps.$layout.centerId = _centerO.id;
+                    }
+                }
+                if(_centerO){
+                    if(!_centerO.passProps){
+                        _centerO.passProps = {};
+                    }
+                    if(!_centerO.passProps.$layout){
+                        _centerO.passProps.$layout = {};
+                    }
+                    _centerO.passProps.$layout.type = 'sideMenuCenter';
+                    if(_leftComp){
+                        _centerO.passProps.$layout.leftId = _leftComp.id;
+                    }
+                    if(_rightComp){
+                        _centerO.passProps.$layout.rightId = _rightComp.id;
+                    }
+                }
+            }
             if(k == 'component'){
                 if(isInStack){
                     if(!obj.passProps){
                         obj.passProps = {};
                     }
-                    obj.passProps.$layout = {isInStack: true};
+                    if(!obj.passProps.$layout){
+                        obj.passProps.$layout = {};
+                    }
+                    obj.passProps.$layout.isInStack = true;
                 }
             }else{
-                // console.log(k, k == 'stack', k == 'stack' || isInStack);
                 sortOutLayout(obj, k == 'stack' || isInStack);
             }
         }
@@ -164,10 +263,22 @@ $Nav.init = function(options){
         }
     }
     if(options.layout){
-        sortOutLayout(options.layout);
-        // console.log('======', options.layout);
         Navigation.events().registerAppLaunchedListener(() => {
-            Navigation.setRoot(options.layout);
+            let _f = (ps) => {
+                let _layout = options.layout;
+                if(_layout instanceof Function){
+                    _layout = _layout.apply(null, ps);
+                }
+                sortOutLayout(_layout);
+                Navigation.setRoot(options.layout);
+            };
+            if(options.promises){
+                Promise.all(options.promises).then((...results)=>{
+                    _f(results[0]);
+                });
+            }else{
+                _f();
+            }
         });
     }
 };
@@ -175,7 +286,11 @@ $Nav.init = function(options){
 $Nav.go = function(command){
     if(command.type && command.url && $Nav.pages[command.url]){
         if(command.type == 'push'){
-            Navigation.push(command.target.props.componentId, {
+            let _target = command.target;
+            if(typeof(_target) !== 'string'){
+                _target = command.target.props.componentId;
+            }
+            Navigation.push(_target, {
                 component: {
                     name: command.url,
                     passProps: {
