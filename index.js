@@ -1,6 +1,7 @@
-import Page from './Page';
 import React from 'react';
 import { Navigation } from "react-native-navigation";
+import Screen from './Screen';
+import Page from './Page';
 
 let _merge = function(a, b){
     if(!a){
@@ -48,11 +49,18 @@ if(!React.Component.$_ISCOMP){
                             url: command
                         };
                     }
-                    if(!command.target){
-                        command.target = this._reactInternalFiber._debugOwner.stateNode;
-                    }
                     if(!command.type){
                         command.type = 'push';
+                    }
+                    if(!command.target){
+                        if(command.type == 'push' && this._reactInternalFiber._debugOwner.stateNode.$center){
+                            command.target = this._reactInternalFiber._debugOwner.stateNode.$center;
+                            if(!command.afterNav){
+                                command.afterNav = this._reactInternalFiber._debugOwner.stateNode.$close;
+                            }
+                        }else{
+                            command.target = this._reactInternalFiber._debugOwner.stateNode;
+                        }
                     }
                     if(command.type == 'push'){
                         if(typeof(command.target) === 'string'){
@@ -124,10 +132,60 @@ Navigation.setDefaultOptions({
 
 global.$Nav = {
     pages: {},
-    Page: Page
+    Page: Page,
+    Screen: Screen
 };
 
 $Nav.nav = Navigation;
+
+let _defaultOptions = {
+    topBar: {
+        animate: true
+    },
+    animations: {
+        push: {
+            enabled: true,
+            content: {
+                x: {
+                    from: 1000,
+                    to: 0,
+                    duration: 300
+                }
+            },
+            topBar:{
+                waitForRender: true,
+                x: {
+                    from: 1000,
+                    to: 0,
+                    duration: 300
+                }
+            }
+        },
+        pop: {
+            enabled: true,
+            content: {
+                x: {
+                    from: 0,
+                    to: 1000,
+                    duration: 300
+                }
+            },
+            topBar:{
+                // visible:false,
+                x: {
+                    from: 0,
+                    to: 1000,
+                    duration: 300
+                }
+            }
+            
+        }
+    }
+};
+
+$Nav.setDefaultOptions = function(options){
+    Navigation.setDefaultOptions(options);
+};
 
 let _regComp = function(k, comp){
     Navigation.registerComponent(k, () => comp);
@@ -138,14 +196,22 @@ let _findComp = function(obj, re){
     if(!re){
         re = {};
     }
-    if(obj.stack){
-        re.stack = obj.stack;
-        _findComp(re.stack, re);
-    }else if(obj.component){
-        re.component = obj.component;
-    }else{
-        for(var k in obj){
-            _findComp(obj[k], re);
+    if(obj){
+        if(obj instanceof Array){
+            for(let i = 0; i < obj.length; i++){
+                _findComp(obj[i], re);
+            }
+        }else{
+            if(obj.stack){
+                re.stack = obj.stack;
+                _findComp(re.stack, re);
+            }else if(obj.component){
+                re.component = obj.component;
+            }else{
+                for(var k in obj){
+                    _findComp(obj[k], re);
+                }
+            }
         }
     }
     return re;
@@ -193,10 +259,10 @@ let sortOutLayout = function(layout, isInStack){
                     }
                     if(_centerObj.component){
                         if(!_centerObj.component.id){
-                            _centerObj.component.id = 'sideMenuCenterStack_' + (_comp_id++);
+                            _centerObj.component.id = 'sideMenuCenterComp_' + (_comp_id++);
                         }
                     }
-                    _centerO = _centerObj.statck || _centerObj.component;
+                    _centerO = _centerObj.component || _centerObj.statck;
                 }
                 if(_leftComp){
                     if(!_leftComp.passProps){
@@ -255,7 +321,19 @@ let sortOutLayout = function(layout, isInStack){
     }
 };
 
+// defaultOptions: use to Navigation.setDefaultOptions(...)
+// pages: object, key-value, screen components, them extends from $Nav.Page
+// promises: array, promise list, pre-load resources
+// layout: JSON, layout config
 $Nav.init = function(options){
+    if(options.defaultOptions){
+        if(options.defaultOptions.animations){
+            Object.assign(_defaultOptions.animations, options.defaultOptions.animations);
+            delete options.defaultOptions.animations;
+        }
+        Object.assign(_defaultOptions, options.defaultOptions);
+    }
+    $Nav.setDefaultOptions(_defaultOptions);
     if(options.pages){
         for(let k in options.pages){
             _regComp(k, options.pages[k]);
@@ -270,7 +348,7 @@ $Nav.init = function(options){
                     _layout = _layout.apply(null, ps);
                 }
                 sortOutLayout(_layout);
-                Navigation.setRoot(options.layout);
+                Navigation.setRoot(_layout);
             };
             if(options.promises){
                 Promise.all(options.promises).then((...results)=>{
@@ -287,7 +365,9 @@ $Nav.go = function(command){
     if(command.type && command.url && $Nav.pages[command.url]){
         if(command.type == 'push'){
             let _target = command.target;
-            if(typeof(_target) !== 'string'){
+            if(typeof(_target) === 'string'){
+                command.target = Screen.get(_target);
+            }else{
                 _target = command.target.props.componentId;
             }
             Navigation.push(_target, {
@@ -295,7 +375,9 @@ $Nav.go = function(command){
                     name: command.url,
                     passProps: {
                         $from: {command: command},
-                        $data: command.data
+                        $data: command.data,
+                        $layout: command.target.props ? command.target.props.$layout : undefined,
+                        $opener: command.target
                     },
                     optoins: merge($Nav.pages[command.url].options, command.options)
                 }
@@ -336,6 +418,9 @@ $Nav.go = function(command){
             });
         }
         
+        if(command.afterNav){
+            command.afterNav();
+        }
     }
 };
 

@@ -1,6 +1,6 @@
 {
   "name": "react-native-navigation-helper",
-  "version": "0.1.0",
+  "version": "0.0.3",
   "description": "easy to use react-native-navigation.",
   "main": "index.js",
   "scripts": {
