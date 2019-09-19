@@ -4,7 +4,8 @@
 
 ## install
 
-1、需先安装 react-native-navigation ，可参考这个网址进行安装： [https://wix.github.io/react-native-navigation/#/docs/Installing](https://wix.github.io/react-native-navigation/#/docs/Installing) 。
+1、需先安装 react-native-navigation ，可参考这个网址进行安装：
+    [https://wix.github.io/react-native-navigation/#/docs/Installing](https://wix.github.io/react-native-navigation/#/docs/Installing) 。
 
 2、使用 npm 安装 react-native-navigation-helper ：
 ```
