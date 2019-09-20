@@ -186,7 +186,7 @@ $Nav.init({
 `react-native-navigation-helper` 会根据当前的环境智能地判断是应该使用 `push` 打开，还是使用 `modal` 或 `overlay` 打开。
 
 但开发者的需求是有可能非常态的，如果默认的打开方式不适合你的需求，你可以明确地指定打开方式：
-```
+```js
 <View>
     <Button
         title="Click Me"
@@ -201,7 +201,7 @@ $Nav.init({
 `type` 的值可以是 `push`、`modal`、`overlay`。
 
 如果需要传递参数给打开的页面，则使用 `data` 传递：
-```
+```js
 <View>
     <Button
         title="Click Me"
