@@ -213,4 +213,46 @@ $Nav.init({
 </View>
 ```
 
+> ## $Nav.Page
+
+所有的页面都应从 `$Nav.Page` 继承。
+
+从 `$Nav.Page` 继承的页面有以下属性、方法：
+
+* $close()
+
+  关闭当前页面。
+  
+* props.$opener
+
+  当前页面是从哪个页面打开的。
+  
+* props.$data
+
+  `opener` 打开当前页面时传递过来的参数。
+```js
+import React from 'react';
+import {View, Text, Button} from 'react-native';
+
+// $Nav 是全局变量，在此文件中不用 import
+class News extends $Nav.Page {
+    constructor(props){
+        super(props);
+    }
+    
+    render() {
+        return (
+            <View>
+                <Text>This is News</Text>
+                <View>
+                    <Button title="Close" onPress={this.$close}/>
+                </View>
+            </View>
+        );
+    }
+}
+
+export default News;
+```
+
 > ## sideMenu
