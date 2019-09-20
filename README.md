@@ -2,7 +2,7 @@
 
 这个包是对 [react-native-navigation](https://github.com/wix/react-native-navigation) 的扩展，它能让你更轻松地在项目中使用 react-native-navigation 。
 
-## Usage
+> ## Usage
 
 1、首先需安装 react-native-navigation ，可参考这个网址进行安装：
 
@@ -32,7 +32,7 @@ $Nav.init({
 });
 ```
 
-## $Nav.init(options)
+> ## $Nav.init(options)
 
 ### options.defaultOptions：设置默认选项
 ```js
@@ -171,7 +171,7 @@ $Nav.init({
 });
 ```
 
-## 导航
+> ## 导航
 
 为可点击的元素添加 `$href` 属性，能轻松实现在页面间的导航：
 ```js
@@ -213,4 +213,4 @@ $Nav.init({
 </View>
 ```
 
-## sideMenu
+> ## sideMenu
