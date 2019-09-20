@@ -53,10 +53,11 @@ $Nav.init({
 ### options.pages：key-value，项目中的所有页面（Screen）
 
 建议将所有页面文件放在同一个文件夹下，例如 `./pages/` ：
-
+```
 |--node_modules
 |--pages
 |    |--index.js
 |    |--news.js
 |    |--detail.js
 |--package.json
+```
