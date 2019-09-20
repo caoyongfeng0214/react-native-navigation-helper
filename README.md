@@ -65,7 +65,7 @@ $Nav.init({
 ```
 所有页面类都应从 `$Nav.Page` 继承，否则可能无法使用某些功能：
 ```js
-// React 是必须的
+// import React 是必须的
 import React from 'react';
 import {View, Text} from 'react-native';
 
