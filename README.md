@@ -61,3 +61,26 @@ $Nav.init({
 |    |--detail.js
 |--package.json
 ```
+所有页面类都应从 `$Nav.Page` 继承，否则可能无法使用某些功能：
+```
+import React from 'react';
+import {View, Text} from 'react-native';
+
+// $Nav 是全局变量，在此文件中不用 import
+class News extends $Nav.Page {
+    constructor(props){
+        super(props);
+    }
+    
+    render() {
+        return (
+            <View>
+                <Text>This is News</Text>
+            </View>
+        );
+    }
+}
+
+export default News;
+```
+`$Nav` 是全局变量，除了在 `./index.js` ，在其它文件中不用 `import` 它。
