@@ -225,15 +225,15 @@ $Nav.init({
 
 从 `$Nav.Page` 继承的页面有以下属性、方法：
 
-* $close()
+* #### $close()
 
   关闭当前页面。
   
-* props.$opener
+* #### props.$opener
 
   当前页面是从哪个页面打开的。
   
-* props.$data
+* #### props.$data
 
   `opener` 打开当前页面时传递过来的参数。
 ```js
