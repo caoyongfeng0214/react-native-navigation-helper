@@ -82,54 +82,6 @@ if(!React.Component.$_ISCOMP){
 }
 
 
-
-Navigation.setDefaultOptions({
-    topBar: {
-        animate: true
-    },
-    animations: {
-        push: {
-            enabled: true,
-            content: {
-                x: {
-                    from: 1000,
-                    to: 0,
-                    duration: 300
-                }
-            },
-            topBar:{
-                waitForRender: true,
-                x: {
-                    from: 1000,
-                    to: 0,
-                    duration: 300
-                }
-            }
-        },
-        pop: {
-            enabled: true,
-            content: {
-                x: {
-                    from: 0,
-                    to: 1000,
-                    duration: 300
-                }
-            },
-            topBar:{
-                // visible:false,
-                x: {
-                    from: 0,
-                    to: 1000,
-                    duration: 300
-                }
-            }
-            
-        }
-    }
-});
-
-
-
 global.$Nav = {
     pages: {},
     Page: Page,
@@ -191,32 +143,32 @@ let _regComp = function(k, comp){
     Navigation.registerComponent(k, () => comp);
 };
 
-let _comp_id = 0;
-let _findComp = function(obj, re){
-    if(!re){
-        re = {};
-    }
+let _findComp = function(obj){
     if(obj){
         if(obj instanceof Array){
             for(let i = 0; i < obj.length; i++){
-                _findComp(obj[i], re);
+                let _re = _findComp(obj[i]);
+                if(_re){
+                    return _re;
+                }
             }
-        }else{
-            if(obj.stack){
-                re.stack = obj.stack;
-                _findComp(re.stack, re);
-            }else if(obj.component){
-                re.component = obj.component;
+        }else if(obj instanceof Object){
+            if(obj.component){
+                return obj.component;
             }else{
                 for(var k in obj){
-                    _findComp(obj[k], re);
+                    let _re = _findComp(obj[k]);
+                    if(_re){
+                        return _re;
+                    }
                 }
             }
         }
     }
-    return re;
+    return undefined;
 };
 
+let _comp_id = 0;
 let sortOutLayout = function(layout, isInStack){
     if(layout instanceof Array){
         for(let i = 0; i < layout.length; i++){
@@ -231,7 +183,7 @@ let sortOutLayout = function(layout, isInStack){
                 }
             }else if(k == 'sideMenu'){
                 let _left = obj.left, _center = obj.center, _right = obj.right,
-                    _leftComp = undefined, _centerObj = undefined, _centerO = undefined, _rightComp = undefined;
+                    _leftComp = undefined, _centerComp = undefined, _rightComp = undefined;
                 if(_left){
                     _leftComp = _left.component;
                 }
@@ -239,7 +191,7 @@ let sortOutLayout = function(layout, isInStack){
                     _rightComp = _right.component;
                 }
                 if(_center){
-                    _centerObj = _findComp(_center);
+                    _centerComp = _findComp(_center);
                 }
                 if(_leftComp){
                     if(!_leftComp.id){
@@ -251,18 +203,8 @@ let sortOutLayout = function(layout, isInStack){
                         _rightComp.id = 'sideMenuRight_' + (_comp_id++);
                     }
                 }
-                if(_centerObj){
-                    if(_centerObj.stack){
-                        if(!_centerObj.stack.id){
-                            _centerObj.stack.id = 'sideMenuCenterStack_' + (_comp_id++);
-                        }
-                    }
-                    if(_centerObj.component){
-                        if(!_centerObj.component.id){
-                            _centerObj.component.id = 'sideMenuCenterComp_' + (_comp_id++);
-                        }
-                    }
-                    _centerO = _centerObj.component || _centerObj.statck;
+                if(_centerComp){
+                    _centerComp.id = 'sideMenuCenterComp_' + (_comp_id++);
                 }
                 if(_leftComp){
                     if(!_leftComp.passProps){
@@ -272,8 +214,8 @@ let sortOutLayout = function(layout, isInStack){
                         _leftComp.passProps.$layout = {};
                     }
                     _leftComp.passProps.$layout.type = 'sideMenuLeft';
-                    if(_centerO){
-                        _leftComp.passProps.$layout.centerId = _centerO.id;
+                    if(_centerComp){
+                        _leftComp.passProps.$layout.centerId = _centerComp.id;
                     }
                 }
                 if(_rightComp){
@@ -284,23 +226,23 @@ let sortOutLayout = function(layout, isInStack){
                         _rightComp.passProps.$layout = {};
                     }
                     _rightComp.passProps.$layout.type = 'sideMenuRight';
-                    if(_centerO){
-                        _rightComp.passProps.$layout.centerId = _centerO.id;
+                    if(_centerComp){
+                        _rightComp.passProps.$layout.centerId = _centerComp.id;
                     }
                 }
-                if(_centerO){
-                    if(!_centerO.passProps){
-                        _centerO.passProps = {};
+                if(_centerComp){
+                    if(!_centerComp.passProps){
+                        _centerComp.passProps = {};
                     }
-                    if(!_centerO.passProps.$layout){
-                        _centerO.passProps.$layout = {};
+                    if(!_centerComp.passProps.$layout){
+                        _centerComp.passProps.$layout = {};
                     }
-                    _centerO.passProps.$layout.type = 'sideMenuCenter';
+                    _centerComp.passProps.$layout.type = 'sideMenuCenter';
                     if(_leftComp){
-                        _centerO.passProps.$layout.leftId = _leftComp.id;
+                        _centerComp.passProps.$layout.leftId = _leftComp.id;
                     }
                     if(_rightComp){
-                        _centerO.passProps.$layout.rightId = _rightComp.id;
+                        _centerComp.passProps.$layout.rightId = _rightComp.id;
                     }
                 }
             }
@@ -326,14 +268,6 @@ let sortOutLayout = function(layout, isInStack){
 // promises: array, promise list, pre-load resources
 // layout: JSON, layout config
 $Nav.init = function(options){
-    if(options.defaultOptions){
-        if(options.defaultOptions.animations){
-            Object.assign(_defaultOptions.animations, options.defaultOptions.animations);
-            delete options.defaultOptions.animations;
-        }
-        Object.assign(_defaultOptions, options.defaultOptions);
-    }
-    $Nav.setDefaultOptions(_defaultOptions);
     if(options.pages){
         for(let k in options.pages){
             _regComp(k, options.pages[k]);
@@ -342,6 +276,29 @@ $Nav.init = function(options){
     }
     if(options.layout){
         Navigation.events().registerAppLaunchedListener(() => {
+            if(options.defaultOptions){
+                if(options.defaultOptions.animations){
+                    Object.assign(_defaultOptions.animations, options.defaultOptions.animations);
+                    delete options.defaultOptions.animations;
+                }
+                Object.assign(_defaultOptions, options.defaultOptions);
+            }
+            $Nav.setDefaultOptions(_defaultOptions);
+
+            Navigation.events().registerComponentDidAppearListener((comp) => {
+                let screen = Screen.get(comp.componentId);
+                if(screen){
+                    screen.$state = Page.STATE.APPEAR;
+                }
+            });
+
+            Navigation.events().registerComponentDidDisappearListener((comp) => {
+                let screen = Screen.get(comp.componentId);
+                if(screen){
+                    screen.$state = Page.STATE.DISAPPEAR;
+                }
+            });
+
             let _f = (ps) => {
                 let _layout = options.layout;
                 if(_layout instanceof Function){

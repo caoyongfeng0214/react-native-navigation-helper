@@ -1,6 +1,6 @@
 {
   "name": "react-native-navigation-helper",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "easy to use react-native-navigation.",
   "main": "index.js",
   "scripts": {
@@ -18,5 +18,5 @@
   "bugs": {
     "url": "https://github.com/caoyongfeng0214/react-native-navigation-helper/issues"
   },
-  "homepage": "https://github.com/caoyongfeng0214/react-native-navigation-helper#readme"
+  "homepage": "https://github.com/caoyongfeng0214/react-native-navigation-helper"
 }

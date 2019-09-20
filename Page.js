@@ -2,6 +2,11 @@ import React from 'react';
 import { Navigation } from "react-native-navigation";
 
 class Page extends React.Component{
+    static STATE = {
+        APPEAR: 1,
+        DISAPPEAR: 2
+    };
+
     constructor(props){
         super(props);
 
@@ -12,20 +17,20 @@ class Page extends React.Component{
                 this.$close = () => {
                     Navigation.pop(props.componentId);
                 };
-                if(props.$opener){
-                    let _navigationButtonPressed = props.$opener.navigationButtonPressed,
-                        _this_navigationButtonPressed = this.navigationButtonPressed;
-                    if(_navigationButtonPressed){
-                        if(_this_navigationButtonPressed){
-                            this.navigationButtonPressed = (btn) => {
-                                _navigationButtonPressed(btn);
-                                _this_navigationButtonPressed(btn);
-                            };
-                        }else{
-                            this.navigationButtonPressed = _navigationButtonPressed
-                        }
-                    }
-                }
+                // if(props.$opener){
+                //     let _navigationButtonPressed = props.$opener.navigationButtonPressed,
+                //         _this_navigationButtonPressed = this.navigationButtonPressed;
+                //     if(_navigationButtonPressed){
+                //         if(_this_navigationButtonPressed){
+                //             this.navigationButtonPressed = (btn) => {
+                //                 _navigationButtonPressed(btn);
+                //                 _this_navigationButtonPressed(btn);
+                //             };
+                //         }else{
+                //             this.navigationButtonPressed = _navigationButtonPressed
+                //         }
+                //     }
+                // }
             } else if(props.$from.command.type == 'overlay'){
                 this.$close = () => {
                     Navigation.dismissOverlay(props.componentId);
@@ -41,6 +46,9 @@ class Page extends React.Component{
             if(props.$layout.type == 'sideMenuLeft'){
                 if(props.$layout.centerId){
                     this.$center = $Nav.Screen.get(props.$layout.centerId);
+                    if(this.$center){
+                        this.$center.$left = this;
+                    }
                 }
                 this.$close = ()=>{
                     Navigation.mergeOptions(props.componentId, {
@@ -51,9 +59,31 @@ class Page extends React.Component{
                         },
                     });
                 };
+                this.$open = ()=>{
+                    Navigation.mergeOptions(props.componentId, {
+                        sideMenu: {
+                            left: {
+                                visible: true
+                            },
+                        },
+                    });
+                };
+                this.$isOpened = ()=>{
+                    return this.$state == Page.STATE.APPEAR;
+                };
+                this.$toggle = ()=>{
+                    if(this.$isOpened()){
+                        this.$close();
+                    }else{
+                        this.$open();
+                    }
+                };
             } else if(props.$layout.type == 'sideMenuRight'){
                 if(props.$layout.centerId){
                     this.$center = $Nav.Screen.get(props.$layout.centerId);
+                    if(this.$center){
+                        this.$center.$right = this;
+                    }
                 }
                 this.$close = ()=>{
                     Navigation.mergeOptions(props.componentId, {
@@ -64,47 +94,66 @@ class Page extends React.Component{
                         },
                     });
                 };
+                this.$open = ()=>{
+                    Navigation.mergeOptions(props.componentId, {
+                        sideMenu: {
+                            right: {
+                                visible: true
+                            },
+                        },
+                    });
+                };
+                this.$isOpened = ()=>{
+                    return this.$state == Page.STATE.APPEAR;
+                };
+                this.$toggle = ()=>{
+                    if(this.$isOpened()){
+                        this.$close();
+                    }else{
+                        this.$open();
+                    }
+                };
             } else if(props.$layout.type == 'sideMenuCenter'){
                 if(props.$layout.leftId){
                     this.$left = $Nav.Screen.get(props.$layout.leftId);
+                    if(this.$left){
+                        this.$left.$center = this;
+                    }
                     this.$openLeft = ()=>{
-                        Navigation.mergeOptions(props.componentId, {
-                            sideMenu: {
-                                left: {
-                                    visible: true
-                                },
-                            },
-                        });
+                        if(this.$left){
+                            this.$left.$open();
+                        }
                     };
                     this.$closeLeft = ()=>{
-                        Navigation.mergeOptions(props.componentId, {
-                            sideMenu: {
-                                left: {
-                                    visible: false
-                                },
-                            },
-                        });
+                        if(this.$left){
+                            this.$left.$close();
+                        }
+                    };
+                    this.$toggleLeft = ()=>{
+                        if(this.$left){
+                            this.$left.$toggle();
+                        }
                     };
                 }
                 if(props.$layout.rightId){
                     this.$right = $Nav.Screen.get(props.$layout.rightId);
+                    if(this.$right){
+                        this.$right.$center = this;
+                    }
                     this.$openRight = ()=>{
-                        Navigation.mergeOptions(props.componentId, {
-                            sideMenu: {
-                                right: {
-                                    visible: true
-                                },
-                            },
-                        });
+                        if(this.$right){
+                            this.$right.$open();
+                        }
                     };
                     this.$closeRight = ()=>{
-                        Navigation.mergeOptions(props.componentId, {
-                            sideMenu: {
-                                right: {
-                                    visible: false
-                                },
-                            },
-                        });
+                        if(this.$right){
+                            this.$right.$close();
+                        }
+                    };
+                    this.$toggleRight = ()=>{
+                        if(this.$right){
+                            this.$right.$toggle();
+                        }
                     };
                 }
             }
