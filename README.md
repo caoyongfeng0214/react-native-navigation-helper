@@ -240,7 +240,6 @@ $Nav.init({
 import React from 'react';
 import {View, Text, Button} from 'react-native';
 
-// $Nav 是全局变量，在此文件中不用 import
 class News extends $Nav.Page {
     constructor(props){
         super(props);
