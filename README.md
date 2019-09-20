@@ -32,6 +32,8 @@ $Nav.init({
 });
 ```
 
+***
+
 > ## $Nav.init(options)
 
 ### options.defaultOptions：设置默认选项
@@ -171,6 +173,8 @@ $Nav.init({
 });
 ```
 
+***
+
 > ## 导航
 
 为可点击的元素添加 `$href` 属性，能轻松实现在页面间的导航：
@@ -213,6 +217,8 @@ $Nav.init({
 </View>
 ```
 
+***
+
 > ## $Nav.Page
 
 所有的页面都应从 `$Nav.Page` 继承。
@@ -254,5 +260,7 @@ class News extends $Nav.Page {
 
 export default News;
 ```
+
+***
 
 > ## sideMenu
