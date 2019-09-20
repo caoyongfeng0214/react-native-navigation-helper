@@ -63,6 +63,7 @@ $Nav.init({
 ```
 所有页面类都应从 `$Nav.Page` 继承，否则可能无法使用某些功能：
 ```js
+// React 是必须的
 import React from 'react';
 import {View, Text} from 'react-native';
 
@@ -84,3 +85,88 @@ class News extends $Nav.Page {
 export default News;
 ```
 `$Nav` 是全局变量，除了在 `./index.js` ，在其它文件中不用 `import` 它。
+
+可单独用一个文件来管理所有的页面，例如可以是 `./pages/_.js` ：
+```js
+export default {
+    // 这里的 key 是你对每个页面的命名
+    index: require('./index').default,
+    news: require('./news').default,
+    detail: require('./detail').default,
+    // ......
+};
+```
+则在 `./index.js` 中可这样使用：
+```js
+// ......
+import pages from './pages/_';
+
+$Nav.init({
+    // ......
+    pages: pages,
+    // ......
+});
+```
+
+### options.layout：JSON or function，基本布局
+
+可以是 JSON，也可以是返回 JSON 的 function。
+```js
+$Nav.init({
+    // ......
+    layout: {
+        root: {
+            stack: {
+                children: [{
+                    component: {
+                        name: 'index' // 这里的值是 options.pages 中每个页面对应的 key
+                    }
+                }]
+            }
+        }
+    }
+    // ......
+});
+```
+更多配置可参考这里：
+
+[https://wix.github.io/react-native-navigation/#/docs/layout-types](https://wix.github.io/react-native-navigation/#/docs/layout-types)
+
+### options.promises：array，一组 Promise，一般用来预加载资源
+
+例如，如果要用到 [react-native-vector-icons](https://github.com/oblador/react-native-vector-icons)，可在 `options.promises` 中预加载要用到的图标：
+```js
+// ......
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
+$Nav.init({
+    // ......
+    promises: [
+        MaterialIcons.getImageSource('home', 25),
+        MaterialIcons.getImageSource('menu', 25)
+    ],
+    // promises 中每一个 Promise 获取到的数据将依次传入这个 function 中
+    layout: function(iconHome, iconMenu){
+        return {
+            root: {
+                stack: {
+                    children: [{
+                        component: {
+                            name: 'index'
+                        }
+                    }],
+                    options: {
+                        topBar: {
+                            leftButtons: [{
+                                id: 'btnLeft',
+                                icon: iconMenu
+                            }]
+                        }
+                    }
+                }
+            }
+        };
+    }
+    // ......
+});
+```
