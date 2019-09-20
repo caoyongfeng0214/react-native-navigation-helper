@@ -245,7 +245,7 @@ class News extends $Nav.Page {
     constructor(props){
         super(props);
         
-        // 当前页面的 $opener 传递过来的参数
+        // 当前页面的 opener 传递过来的参数
         console.log(props.$data);
     }
     
