@@ -121,7 +121,7 @@ $Nav.init({
             stack: {
                 children: [{
                     component: {
-                        name: 'index' // 这里的值是 options.pages 中每个页面对应的 key
+                        name: 'index' // 这里的值是 options.pages 中某个页面对应的 key
                     }
                 }]
             }
