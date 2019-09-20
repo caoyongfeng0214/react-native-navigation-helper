@@ -4,7 +4,7 @@
 
 ## Usage
 
-1、需先安装 react-native-navigation ，可参考这个网址进行安装：
+1、首先需安装 react-native-navigation ，可参考这个网址进行安装：
 
 [https://wix.github.io/react-native-navigation/#/docs/Installing](https://wix.github.io/react-native-navigation/#/docs/Installing) 。
 
@@ -108,9 +108,9 @@ $Nav.init({
 });
 ```
 
-### options.layout：JSON or function，基本布局
+### options.layout：object or function，基本布局
 
-可以是 JSON，也可以是返回 JSON 的 function。
+可以是 object，也可以是返回 object 的 function。
 ```js
 $Nav.init({
     // ......
@@ -170,3 +170,47 @@ $Nav.init({
     // ......
 });
 ```
+
+## 导航
+
+为可点击的元素添加 `$href` 属性，能轻松实现在页面间的导航：
+```js
+<View>
+    <Button title="Click Me" $href="detail"/>
+</View>
+```
+`$href` 属性的值可以是 `string` ，也可以是 `object` 。
+
+当 `$href` 属性的值是 `string` 时，它指的是一个页面的名字（在 `options.pages` 中设置的）。当用户点击该元素后，将打开这个页面。
+
+`react-native-navigation-helper` 会根据当前的环境智能地判断是应该使用 `push` 打开，还是使用 `modal` 或 `overlay` 打开。
+
+但开发者的需求是有可能非常态的，如果默认的打开方式不适合你的需求，你可以明确地指定打开方式：
+```
+<View>
+    <Button
+        title="Click Me"
+        $href={{
+            url: 'detail',
+            type: 'modal'
+        }}/>
+</View>
+```
+上面的代码明确地要求以 `modal` 方式打开 `detail` 页面。
+
+`type` 的值可以是 `push`、`modal`、`overlay`。
+
+如果需要传递参数给打开的页面，则使用 `data` 传递：
+```
+<View>
+    <Button
+        title="Click Me"
+        $href={{
+            url: 'detail',
+            type: 'modal',
+            data: {id: 100}
+        }}/>
+</View>
+```
+
+## sideMenu
