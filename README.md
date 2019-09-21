@@ -320,3 +320,40 @@ $Nav.init({
     // ......
 });
 ```
+`sideMenu` 由三个页面组成。在中间主体部分的页面中，可用 `this.$toggleLeft()` 切换左边栏的显示状态：
+```js
+class Index extends $Nav.Page {
+    constructor(props) {
+        super(props);
+    }
+    
+    navigationButtonPressed = ({buttonId}) => {
+        if (buttonId === 'btnToggleLeft') {
+            this.$toggleLeft();
+        }
+    }
+    
+    render() {
+        // ......
+    }
+}
+```
+也可用 `this.$openLeft()` 和 `this.$closeLeft()` 打开、关闭左边栏。
+
+可用 `this.$left` 访问左边栏页面对象。
+
+同理，可用 `this.$toggleRight()`、`this.$openRight()`、`this.$closeRight()` 切换右边栏显示状态、打开右边栏、关闭右边栏，用 `this.$right` 访问右边栏页面对象。
+
+在左边栏或右边栏页面中，可用 `this.$open()`、`this.$close()` 打开、关闭自己：
+```js
+class SideMenuLeft extends $Nav.Page {
+    render() {
+        return (
+            <View>
+                <Button title="Close" onPress={this.$close}/>
+            </View>
+        );
+    }
+}
+```
+也可用 `this.$center` 访问中间主体页面对象。
