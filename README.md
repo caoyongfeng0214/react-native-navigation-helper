@@ -206,7 +206,7 @@ $Nav.init({
         }}/>
 </View>
 ```
-上面的代码明确地要求以 `modal` 方式打开 `detail` 页面。
+上面的示例明确地要求以 `modal` 方式打开 `detail` 页面。
 
 `type` 的值可以是 `push`、`modal`、`overlay`。
 
@@ -222,8 +222,49 @@ $Nav.init({
         }}/>
 </View>
 ```
+还可以设置在导航后执行的 function：
+```js
+<View>
+    <Button
+        title="Click Me"
+        $href={{
+            url: 'detail',
+            type: 'modal',
+            data: {id: 100},
+            afterNav: this.$close
+        }}/>
+</View>
+```
+上面的示例在导航后执行 `this.$close()` 关闭当前面。
 
-<br>
+如果希望在 `js` 代码中进行导航，则可用 `this.$go(cmd)`：
+```js
+class Index extends $Nav.Page {
+    constructor(props) {
+        super(props);
+    }
+    
+    goDetail = () => {
+        this.$go('detail');
+    }
+    
+    render() {
+        return (
+            <View>
+                <Button title="Navigation to Detail" onPress={this.goDetail}/>
+            </View>
+        );
+    }
+}
+```
+`this.$go(cmd)` 的参数与 `$href` 属性的值一样，也可以是 `object`：
+```js
+this.$go({
+    url: 'detail',
+    type: 'modal',
+    data: {id: 100}
+});
+```
 
 ***
 
