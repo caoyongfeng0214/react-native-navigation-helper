@@ -177,6 +177,8 @@ $Nav.init({
 });
 ```
 
+<br>
+
 ***
 
 > ## 导航
@@ -220,6 +222,8 @@ $Nav.init({
         }}/>
 </View>
 ```
+
+<br>
 
 ***
 
@@ -266,6 +270,8 @@ class News extends $Nav.Page {
 
 export default News;
 ```
+
+<br>
 
 ***
 
