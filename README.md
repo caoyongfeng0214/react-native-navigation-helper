@@ -276,3 +276,47 @@ export default News;
 ***
 
 > ## sideMenu
+
+`sideMenu` 有左边栏、右边栏、中间主体部分。其中左边栏和右边栏是可选的。
+
+参考：[https://wix.github.io/react-native-navigation/#/docs/layout-types?id=sidemenu](https://wix.github.io/react-native-navigation/#/docs/layout-types?id=sidemenu)
+
+```js
+$Nav.init({
+    // ......
+    promises: [
+        MaterialIcons.getImageSource('menu', 25)
+    ],
+    layout: function(iconMenu){
+        return {
+            root: {
+                sideMenu: {
+                    left: {
+                        component: {
+                            name: 'sidemenuleft'
+                        }
+                    },
+                    center: {
+                        stack: {
+                            children: [{
+                                component: {
+                                    name: 'index',
+                                    options: {
+                                        topBar: {
+                                            leftButtons: [{
+                                                id: 'btnToggleLeft',
+                                                icon: iconMenu
+                                            }]
+                                        }
+                                    }
+                                }
+                            }]
+                        }
+                    }
+                }
+            }
+        };
+    }
+    // ......
+});
+```
