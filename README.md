@@ -398,3 +398,11 @@ class SideMenuLeft extends $Nav.Page {
 }
 ```
 也可用 `this.$center` 访问中间主体页面对象。
+
+<br>
+
+***
+
+> ## 更多....
+
+`react-native-navigation-helper` 提供的功能是有限的，可能并不能完全满足你的需求。你可以用 `$Nav.nav` 直接使用 `react-native-navigation` 中的 `Navigation` 对象。当然，你也可以直接在项目中 import react-native-navigation。
