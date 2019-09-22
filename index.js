@@ -3,6 +3,7 @@ import { Navigation } from "react-native-navigation";
 import Screen from './Screen';
 import Page from './Page';
 import CMD from './command';
+import Layout from './layout';
 
 let _merge = function(a, b){
     if(!a){
@@ -170,100 +171,100 @@ let _findComp = function(obj){
     return undefined;
 };
 
-let _comp_id = 0;
-let sortOutLayout = function(layout, isInStack){
-    if(layout instanceof Array){
-        for(let i = 0; i < layout.length; i++){
-            sortOutLayout(layout[i], isInStack);
-        }
-    } else if(layout instanceof Object){
-        for(let k in layout){
-            let obj = layout[k];
-            if(k == 'component' || k == 'stack'){
-                if(!obj.id){
-                    obj.id = k + '_' + (_comp_id++);
-                }
-            }else if(k == 'sideMenu'){
-                let _left = obj.left, _center = obj.center, _right = obj.right,
-                    _leftComp = undefined, _centerComp = undefined, _rightComp = undefined;
-                if(_left){
-                    _leftComp = _left.component;
-                }
-                if(_right){
-                    _rightComp = _right.component;
-                }
-                if(_center){
-                    _centerComp = _findComp(_center);
-                }
-                if(_leftComp){
-                    if(!_leftComp.id){
-                        _leftComp.id = 'sideMenuLeft_' + (_comp_id++);
-                    }
-                }
-                if(_rightComp){
-                    if(!_rightComp.id){
-                        _rightComp.id = 'sideMenuRight_' + (_comp_id++);
-                    }
-                }
-                if(_centerComp){
-                    _centerComp.id = 'sideMenuCenterComp_' + (_comp_id++);
-                }
-                if(_leftComp){
-                    if(!_leftComp.passProps){
-                        _leftComp.passProps = {};
-                    }
-                    if(!_leftComp.passProps.$layout){
-                        _leftComp.passProps.$layout = {};
-                    }
-                    _leftComp.passProps.$layout.type = 'sideMenuLeft';
-                    if(_centerComp){
-                        _leftComp.passProps.$layout.centerId = _centerComp.id;
-                    }
-                }
-                if(_rightComp){
-                    if(!_rightComp.passProps){
-                        _rightComp.passProps = {};
-                    }
-                    if(!_rightComp.passProps.$layout){
-                        _rightComp.passProps.$layout = {};
-                    }
-                    _rightComp.passProps.$layout.type = 'sideMenuRight';
-                    if(_centerComp){
-                        _rightComp.passProps.$layout.centerId = _centerComp.id;
-                    }
-                }
-                if(_centerComp){
-                    if(!_centerComp.passProps){
-                        _centerComp.passProps = {};
-                    }
-                    if(!_centerComp.passProps.$layout){
-                        _centerComp.passProps.$layout = {};
-                    }
-                    _centerComp.passProps.$layout.type = 'sideMenuCenter';
-                    if(_leftComp){
-                        _centerComp.passProps.$layout.leftId = _leftComp.id;
-                    }
-                    if(_rightComp){
-                        _centerComp.passProps.$layout.rightId = _rightComp.id;
-                    }
-                }
-            }
-            if(k == 'component'){
-                if(isInStack){
-                    if(!obj.passProps){
-                        obj.passProps = {};
-                    }
-                    if(!obj.passProps.$layout){
-                        obj.passProps.$layout = {};
-                    }
-                    obj.passProps.$layout.isInStack = true;
-                }
-            }else{
-                sortOutLayout(obj, k == 'stack' || isInStack);
-            }
-        }
-    }
-};
+// let _comp_id = 0;
+// let sortOutLayout = function(layout, isInStack){
+//     if(layout instanceof Array){
+//         for(let i = 0; i < layout.length; i++){
+//             sortOutLayout(layout[i], isInStack);
+//         }
+//     } else if(layout instanceof Object){
+//         for(let k in layout){
+//             let obj = layout[k];
+//             if(k == 'component' || k == 'stack'){
+//                 if(!obj.id){
+//                     obj.id = k + '_' + (_comp_id++);
+//                 }
+//             }else if(k == 'sideMenu'){
+//                 let _left = obj.left, _center = obj.center, _right = obj.right,
+//                     _leftComp = undefined, _centerComp = undefined, _rightComp = undefined;
+//                 if(_left){
+//                     _leftComp = _left.component;
+//                 }
+//                 if(_right){
+//                     _rightComp = _right.component;
+//                 }
+//                 if(_center){
+//                     _centerComp = _findComp(_center);
+//                 }
+//                 if(_leftComp){
+//                     if(!_leftComp.id){
+//                         _leftComp.id = 'sideMenuLeft_' + (_comp_id++);
+//                     }
+//                 }
+//                 if(_rightComp){
+//                     if(!_rightComp.id){
+//                         _rightComp.id = 'sideMenuRight_' + (_comp_id++);
+//                     }
+//                 }
+//                 if(_centerComp){
+//                     _centerComp.id = 'sideMenuCenterComp_' + (_comp_id++);
+//                 }
+//                 if(_leftComp){
+//                     if(!_leftComp.passProps){
+//                         _leftComp.passProps = {};
+//                     }
+//                     if(!_leftComp.passProps.$layout){
+//                         _leftComp.passProps.$layout = {};
+//                     }
+//                     _leftComp.passProps.$layout.type = 'sideMenuLeft';
+//                     if(_centerComp){
+//                         _leftComp.passProps.$layout.centerId = _centerComp.id;
+//                     }
+//                 }
+//                 if(_rightComp){
+//                     if(!_rightComp.passProps){
+//                         _rightComp.passProps = {};
+//                     }
+//                     if(!_rightComp.passProps.$layout){
+//                         _rightComp.passProps.$layout = {};
+//                     }
+//                     _rightComp.passProps.$layout.type = 'sideMenuRight';
+//                     if(_centerComp){
+//                         _rightComp.passProps.$layout.centerId = _centerComp.id;
+//                     }
+//                 }
+//                 if(_centerComp){
+//                     if(!_centerComp.passProps){
+//                         _centerComp.passProps = {};
+//                     }
+//                     if(!_centerComp.passProps.$layout){
+//                         _centerComp.passProps.$layout = {};
+//                     }
+//                     _centerComp.passProps.$layout.type = 'sideMenuCenter';
+//                     if(_leftComp){
+//                         _centerComp.passProps.$layout.leftId = _leftComp.id;
+//                     }
+//                     if(_rightComp){
+//                         _centerComp.passProps.$layout.rightId = _rightComp.id;
+//                     }
+//                 }
+//             }
+//             if(k == 'component'){
+//                 if(isInStack){
+//                     if(!obj.passProps){
+//                         obj.passProps = {};
+//                     }
+//                     if(!obj.passProps.$layout){
+//                         obj.passProps.$layout = {};
+//                     }
+//                     obj.passProps.$layout.isInStack = true;
+//                 }
+//             }else{
+//                 sortOutLayout(obj, k == 'stack' || isInStack);
+//             }
+//         }
+//     }
+// };
 
 $Nav.layout = undefined;
 
@@ -311,7 +312,11 @@ $Nav.init = function(options){
                 if(_layout instanceof Function){
                     _layout = _layout.apply(null, ps);
                 }
-                sortOutLayout(_layout);
+                // sortOutLayout(_layout);
+                for(let k in _layout){
+                    Layout.sortOut(_layout[k]);
+                }
+                
                 $Nav.layout = _layout;
                 Navigation.setRoot(_layout);
             };
@@ -365,11 +370,20 @@ $Nav.go = function(command){
                     _target = command.target.props.componentId;
                 }
                 if(_layout){
+                    // let $_layout = undefined;
+                    // if(command.target && command.target.props && command.target.props.$layout){
+                    //     $_layout = {};
+                    //     for(let k in command.target.props.$layout){
+                    //         if(k != 'windowId'){
+                    //             $_layout[k] = command.target.props.$layout[k];
+                    //         }
+                    //     }
+                    // }
                     _rejectData(_layout, {
                         passProps:{
                             $from: {command: command},
                             $data: command.data,
-                            $layout: (command.target && command.target.props) ? command.target.props.$layout : undefined,
+                            // $layout: $_layout,
                             $opener: command.opener
                         }
                     });
@@ -389,41 +403,63 @@ $Nav.go = function(command){
                 }
                 Navigation.push(_target, _layout);
             }else if(command.type == 'overlay'){
-                Navigation.showOverlay({
-                    component: {
-                        name: command.url,
-                        passProps: {
+                if(_layout){
+                    _rejectData(_layout, {
+                        passProps:{
                             $from: {command: command},
                             $data: command.data,
                             $opener: command.opener
-                        },
-                        options: merge({
-                            overlay: {
-                                interceptTouchOutside: true
-                            }
-                        }, $Nav.pages[command.url].options, command.options)
-                    }
-                });
+                        }
+                    });
+                }else{
+                    _layout = {
+                        component: {
+                            name: command.url,
+                            passProps: {
+                                $from: {command: command},
+                                $data: command.data,
+                                $opener: command.opener
+                            },
+                            options: merge({
+                                overlay: {
+                                    interceptTouchOutside: true
+                                }
+                            }, $Nav.pages[command.url].options, command.options)
+                        }
+                    };
+                }
+                Navigation.showOverlay(_layout);
             }else if(command.type == 'modal'){
-                Navigation.showModal({
-                    stack: {
-                        children: [{
-                            component: {
-                                name: command.url,
-                                passProps: {
-                                    $from: {command: command},
-                                    $data: command.data,
-                                    $opener: command.opener
-                                },
-                                options: merge({
-                                    topBar: {
-                                        visible: false
-                                    }
-                                }, $Nav.pages[command.url].options, command.options)
-                            }
-                        }]
-                    }
-                });
+                if(_layout){
+                    _rejectData(_layout, {
+                        passProps:{
+                            $from: {command: command},
+                            $data: command.data,
+                            $opener: command.opener
+                        }
+                    });
+                }else{
+                    _layout = {
+                        stack: {
+                            children: [{
+                                component: {
+                                    name: command.url,
+                                    passProps: {
+                                        $from: {command: command},
+                                        $data: command.data,
+                                        $opener: command.opener
+                                    },
+                                    options: merge({
+                                        topBar: {
+                                            visible: false
+                                        }
+                                    }, $Nav.pages[command.url].options, command.options)
+                                }
+                            }]
+                        }
+                    };
+                }
+                Navigation.showModal(_layout);
             }
             
             if(command.afterNav){

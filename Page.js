@@ -18,6 +18,12 @@ class Page extends React.Component{
                 this.$close = () => {
                     Navigation.pop(props.componentId);
                 };
+                if(props.$layout && props.$layout.windowId){
+                    this.$closeWin = () => {
+                        // Navigation.pop(props.$layout.stackId);
+                        Navigation.pop(props.$layout.windowId);
+                    };
+                }
                 // if(props.$opener){
                 //     let _navigationButtonPressed = props.$opener.navigationButtonPressed,
                 //         _this_navigationButtonPressed = this.navigationButtonPressed;
@@ -36,10 +42,20 @@ class Page extends React.Component{
                 this.$close = () => {
                     Navigation.dismissOverlay(props.componentId);
                 };
+                if(props.$layout && props.$layout.windowId){
+                    this.$closeWin = () => {
+                        Navigation.dismissOverlay(props.$layout.windowId);
+                    };
+                }
             } else if(props.$from.command.type == 'modal'){
                 this.$close = () => {
                     Navigation.dismissModal(props.componentId);
                 };
+                if(props.$layout && props.$layout.windowId){
+                    this.$closeWin = () => {
+                        Navigation.dismissModal(props.$layout.windowId);
+                    };
+                }
             }
         }
 

@@ -24,7 +24,7 @@ command.parse = function(cmd, curPage){
         if(typeof(cmd.target) === 'string'){
 
         }else{
-            if(!cmd.target.props.$layout || !cmd.target.props.$layout.isInStack){
+            if(!cmd.target.props.$layout || !cmd.target.props.$layout.stackId){
                 cmd.type = 'overlay';
             }
         }
