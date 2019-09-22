@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigation } from "react-native-navigation";
 import Screen from './Screen';
 import Page from './Page';
+import CMD from './command';
 
 let _merge = function(a, b){
     if(!a){
@@ -43,34 +44,35 @@ if(!React.Component.$_ISCOMP){
             super(props);
             if(props && props.$href && !(props.$href_)){
                 this.render = () => {
-                    let command = props.$href;
-                    if(typeof(command) == 'string'){
-                        command = {
-                            url: command
-                        };
-                    }
-                    if(!command.type){
-                        command.type = 'push';
-                    }
-                    if(!command.target){
-                        if(command.type == 'push' && this._reactInternalFiber._debugOwner.stateNode.$center){
-                            command.target = this._reactInternalFiber._debugOwner.stateNode.$center;
-                            if(!command.afterNav){
-                                command.afterNav = this._reactInternalFiber._debugOwner.stateNode.$close;
-                            }
-                        }else{
-                            command.target = this._reactInternalFiber._debugOwner.stateNode;
-                        }
-                    }
-                    if(command.type == 'push'){
-                        if(typeof(command.target) === 'string'){
+                    // let command = props.$href;
+                    // if(typeof(command) === 'string'){
+                    //     command = {
+                    //         url: command
+                    //     };
+                    // }
+                    // if(!command.type){
+                    //     command.type = 'push';
+                    // }
+                    // if(!command.target){
+                    //     if(command.type == 'push' && this._reactInternalFiber._debugOwner.stateNode.$center){
+                    //         command.target = this._reactInternalFiber._debugOwner.stateNode.$center;
+                    //         if(!command.afterNav){
+                    //             command.afterNav = this._reactInternalFiber._debugOwner.stateNode.$close;
+                    //         }
+                    //     }else{
+                    //         command.target = this._reactInternalFiber._debugOwner.stateNode;
+                    //     }
+                    // }
+                    // if(command.type == 'push'){
+                    //     if(typeof(command.target) === 'string'){
 
-                        }else{
-                            if(!command.target.props.$layout || !command.target.props.$layout.isInStack){
-                                command.type = 'overlay';
-                            }
-                        }
-                    }
+                    //     }else{
+                    //         if(!command.target.props.$layout || !command.target.props.$layout.isInStack){
+                    //             command.type = 'overlay';
+                    //         }
+                    //     }
+                    // }
+                    let command = CMD.parse(props.$href, this._reactInternalFiber._debugOwner.stateNode);
                     return <this.constructor {...props} $href_={props.$href} onPress={()=>$Nav.go(command)}/>;
                 }
             }
@@ -263,6 +265,8 @@ let sortOutLayout = function(layout, isInStack){
     }
 };
 
+$Nav.layout = undefined;
+
 // defaultOptions: use to Navigation.setDefaultOptions(...)
 // pages: object, key-value, screen components, them extends from $Nav.Page
 // promises: array, promise list, pre-load resources
@@ -305,6 +309,7 @@ $Nav.init = function(options){
                     _layout = _layout.apply(null, ps);
                 }
                 sortOutLayout(_layout);
+                $Nav.layout = _layout;
                 Navigation.setRoot(_layout);
             };
             if(options.promises){
@@ -318,8 +323,30 @@ $Nav.init = function(options){
     }
 };
 
+let _rejectData = function(obj, data){
+    if(obj){
+        if(obj instanceof Array){
+            for(let i = 0; i < obj.length; i++){
+                _rejectData(obj[i], data);
+            }
+        }else if(obj instanceof Object){
+            for(let k in obj){
+                let v = obj[k];
+                if(v){
+                    if(k == 'component'){
+                        v.passProps = merge(v.passProps, data.passProps);
+                    }else{
+                        _rejectData(v, data);
+                    }
+                }
+            }
+        }
+    }
+};
+
 $Nav.go = function(command){
-    if(command.type && command.url && $Nav.pages[command.url]){
+    if(command.type && command.url && ($Nav.layout[command.url] || $Nav.pages[command.url])){
+        let _layout = $Nav.layout[command.url];
         if(command.type == 'push'){
             let _target = command.target;
             if(typeof(_target) === 'string'){
@@ -327,25 +354,38 @@ $Nav.go = function(command){
             }else{
                 _target = command.target.props.componentId;
             }
-            Navigation.push(_target, {
-                component: {
-                    name: command.url,
-                    passProps: {
+            if(_layout){
+                _rejectData(_layout, {
+                    passProps:{
                         $from: {command: command},
                         $data: command.data,
-                        $layout: command.target.props ? command.target.props.$layout : undefined,
-                        $opener: command.target
-                    },
-                    optoins: merge($Nav.pages[command.url].options, command.options)
-                }
-            });
+                        $layout: (command.target && command.target.props) ? command.target.props.$layout : undefined,
+                        $opener: command.opener
+                    }
+                });
+            }else{
+                _layout = {
+                    component: {
+                        name: command.url,
+                        passProps: {
+                            $from: {command: command},
+                            $data: command.data,
+                            $layout: (command.target && command.target.props) ? command.target.props.$layout : undefined,
+                            $opener: command.opener
+                        },
+                        optoins: merge($Nav.pages[command.url].options, command.options)
+                    }
+                };
+            }
+            Navigation.push(_target, _layout);
         }else if(command.type == 'overlay'){
             Navigation.showOverlay({
                 component: {
                     name: command.url,
                     passProps: {
                         $from: {command: command},
-                        $data: command.data
+                        $data: command.data,
+                        $opener: command.opener
                     },
                     options: merge({
                         overlay: {
@@ -362,7 +402,8 @@ $Nav.go = function(command){
                             name: command.url,
                             passProps: {
                                 $from: {command: command},
-                                $data: command.data
+                                $data: command.data,
+                                $opener: command.opener
                             },
                             options: merge({
                                 topBar: {

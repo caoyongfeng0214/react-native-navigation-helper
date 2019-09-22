@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navigation } from "react-native-navigation";
+import CMD from './command';
 
 class Page extends React.Component{
     static STATE = {
@@ -169,6 +170,12 @@ class Page extends React.Component{
             $Nav.Screen.remove(this);
             if (this.navigationEventListener) {
                 this.navigationEventListener.remove();
+            }
+        };
+
+        this.$go = (cmd) => {
+            if(cmd){
+                $Nav.go(CMD.parse(cmd, this));
             }
         };
     }
