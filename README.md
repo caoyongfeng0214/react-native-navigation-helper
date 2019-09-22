@@ -411,6 +411,37 @@ class SideMenuLeft extends $Nav.Page {
 
 ***
 
+> ## 路由拦截
+
+通过路由拦截，可阻止页面导航或改变导航页面。
+
+在 `$Nav.init(options)` 参数中配置 `beforeNav`，它是一个 function，在页面导航之前执行，它需返回 `Promise` 或 `真` 与 `假`。
+```js
+$Nav.init({
+    // ......
+    beforeNav: function(fromPage, to){
+        if(to == 'profile' && !isAuthorized()){
+            fromPage.$go({
+                url: 'login',
+                type: 'modal'
+            });
+            return false;
+        }
+        return true;
+    },
+    // ......
+});
+```
+`beforeNav` 会被传入两个参数，第一个参数 `fromPage` 是当前页面对象，第二个参数 `to` 是即将导航到的页面的名字。
+
+如果返回的不是 `Promise`，返回 `假` 则阻止导航。
+
+如果返回 `Promise`，则 `resolve` `假` 将阻止导航。
+
+<br>
+
+***
+
 > ## 导航到有基本布局的页面
 
 如果导航的目标页不是简单的 `$Nav.Page`，而是由多个 `$Nav.Page` 组合而成的有基本布局的页面（例如 `sideMenu`、`bottomTabs`），则需在 `$Nav.init(options)` 的 `layout` 中进行配置：
