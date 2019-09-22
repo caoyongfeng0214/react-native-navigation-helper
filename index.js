@@ -267,10 +267,13 @@ let sortOutLayout = function(layout, isInStack){
 
 $Nav.layout = undefined;
 
+let BEFORENAV = undefined;
+
 // defaultOptions: use to Navigation.setDefaultOptions(...)
 // pages: object, key-value, screen components, them extends from $Nav.Page
 // promises: array, promise list, pre-load resources
 // layout: JSON, layout config
+// beforeNav: function, it return a Promise or boolean
 $Nav.init = function(options){
     if(options.pages){
         for(let k in options.pages){
@@ -321,10 +324,13 @@ $Nav.init = function(options){
             }
         });
     }
+    if(options.beforeNav && options.beforeNav instanceof Function){
+        BEFORENAV = options.beforeNav;
+    }
 };
 
 let _rejectData = function(obj, data){
-    if(obj){
+    if(obj && data && data.passProps){
         if(obj instanceof Array){
             for(let i = 0; i < obj.length; i++){
                 _rejectData(obj[i], data);
@@ -334,7 +340,10 @@ let _rejectData = function(obj, data){
                 let v = obj[k];
                 if(v){
                     if(k == 'component'){
-                        v.passProps = merge(v.passProps, data.passProps);
+                        if(!v._passProps){
+                            v._passProps = v.passProps || {};
+                        }
+                        v.passProps = merge({}, v._passProps, data.passProps);
                     }else{
                         _rejectData(v, data);
                     }
@@ -346,78 +355,96 @@ let _rejectData = function(obj, data){
 
 $Nav.go = function(command){
     if(command.type && command.url && ($Nav.layout[command.url] || $Nav.pages[command.url])){
-        let _layout = $Nav.layout[command.url];
-        if(command.type == 'push'){
-            let _target = command.target;
-            if(typeof(_target) === 'string'){
-                command.target = Screen.get(_target);
-            }else{
-                _target = command.target.props.componentId;
-            }
-            if(_layout){
-                _rejectData(_layout, {
-                    passProps:{
-                        $from: {command: command},
-                        $data: command.data,
-                        $layout: (command.target && command.target.props) ? command.target.props.$layout : undefined,
-                        $opener: command.opener
-                    }
-                });
-            }else{
-                _layout = {
-                    component: {
-                        name: command.url,
-                        passProps: {
+        let _do = ()=>{
+            let _layout = $Nav.layout[command.url];
+            if(command.type == 'push'){
+                let _target = command.target;
+                if(typeof(_target) === 'string'){
+                    command.target = Screen.get(_target);
+                }else{
+                    _target = command.target.props.componentId;
+                }
+                if(_layout){
+                    _rejectData(_layout, {
+                        passProps:{
                             $from: {command: command},
                             $data: command.data,
                             $layout: (command.target && command.target.props) ? command.target.props.$layout : undefined,
                             $opener: command.opener
-                        },
-                        optoins: merge($Nav.pages[command.url].options, command.options)
-                    }
-                };
-            }
-            Navigation.push(_target, _layout);
-        }else if(command.type == 'overlay'){
-            Navigation.showOverlay({
-                component: {
-                    name: command.url,
-                    passProps: {
-                        $from: {command: command},
-                        $data: command.data,
-                        $opener: command.opener
-                    },
-                    options: merge({
-                        overlay: {
-                            interceptTouchOutside: true
                         }
-                    }, $Nav.pages[command.url].options, command.options)
-                }
-            });
-        }else if(command.type == 'modal'){
-            Navigation.showModal({
-                stack: {
-                    children: [{
+                    });
+                }else{
+                    _layout = {
                         component: {
                             name: command.url,
                             passProps: {
                                 $from: {command: command},
                                 $data: command.data,
+                                $layout: (command.target && command.target.props) ? command.target.props.$layout : undefined,
                                 $opener: command.opener
                             },
-                            options: merge({
-                                topBar: {
-                                    visible: false
-                                }
-                            }, $Nav.pages[command.url].options, command.options)
+                            optoins: merge($Nav.pages[command.url].options, command.options)
                         }
-                    }]
+                    };
                 }
-            });
-        }
-        
-        if(command.afterNav){
-            command.afterNav();
+                Navigation.push(_target, _layout);
+            }else if(command.type == 'overlay'){
+                Navigation.showOverlay({
+                    component: {
+                        name: command.url,
+                        passProps: {
+                            $from: {command: command},
+                            $data: command.data,
+                            $opener: command.opener
+                        },
+                        options: merge({
+                            overlay: {
+                                interceptTouchOutside: true
+                            }
+                        }, $Nav.pages[command.url].options, command.options)
+                    }
+                });
+            }else if(command.type == 'modal'){
+                Navigation.showModal({
+                    stack: {
+                        children: [{
+                            component: {
+                                name: command.url,
+                                passProps: {
+                                    $from: {command: command},
+                                    $data: command.data,
+                                    $opener: command.opener
+                                },
+                                options: merge({
+                                    topBar: {
+                                        visible: false
+                                    }
+                                }, $Nav.pages[command.url].options, command.options)
+                            }
+                        }]
+                    }
+                });
+            }
+            
+            if(command.afterNav){
+                command.afterNav();
+            }
+        };
+        if(BEFORENAV){
+            let check = BEFORENAV(command.opener, command.url);
+            if(check instanceof Promise){
+                check.then((o)=>{
+                    if(o){
+                        _do();
+                    }
+                }).catch(()=>{});
+            }else{
+                if(check){
+                    _do();
+                }
+            }
+        }else{
+            _do();
         }
     }
 };
