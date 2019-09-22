@@ -282,7 +282,7 @@ this.$go({
 
   关闭当前页面。
 
-* #### $open(options)
+* #### $go(options)
 
   导航到指定页面。
   
