@@ -281,6 +281,10 @@ this.$go({
 * #### $close()
 
   关闭当前页面。
+
+* #### $open(options)
+
+  导航到指定页面。
   
 * #### props.$opener
 
@@ -461,6 +465,7 @@ this.$go({
     type: 'modal'
 });
 ```
+`layout` 根节点 `key` 会被当作页面的名字，因此不能与其它页面的名字重复。
 
 <br>
 
