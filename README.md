@@ -268,6 +268,8 @@ this.$go({
 });
 ```
 
+<br>
+
 ***
 
 > ## $Nav.Page
@@ -279,6 +281,10 @@ this.$go({
 * #### $close()
 
   关闭当前页面。
+
+* #### $go(options)
+
+  导航到指定页面。
   
 * #### props.$opener
 
@@ -400,6 +406,66 @@ class SideMenuLeft extends $Nav.Page {
 }
 ```
 也可用 `this.$center` 访问中间主体页面对象。
+
+<br>
+
+***
+
+> ## 导航到有基本布局的页面
+
+如果导航的目标页不是简单的 `$Nav.Page`，而是由多个 `$Nav.Page` 组合而成的有基本布局的页面（例如 `sideMenu`、`bottomTabs`），则需在 `$Nav.init(options)` 的 `layout` 中进行配置：
+```js
+$Nav.init({
+    // ......
+    layout: {
+        root: {
+            // ......
+        },
+        shop: {
+            bottomTabs: {
+                children: [{
+                    stack: {
+                        children: [{
+                            component: {
+                                name: 'shopindex'
+                            }
+                        }],
+                        options: {
+                            bottomTab: {
+                                text: 'Shop',
+                                icon: require('./imgs/tab0.png')
+                            }
+                        }
+                    }
+                }, {
+                    component: {
+                        name: 'orders',
+                        options: {
+                            bottomTab: {
+                                text: 'Orders',
+                                icon: require('./imgs/tab1.png')
+                            }
+                        }
+                    }
+                }]
+            }
+        }
+    },
+    // ......
+});
+```
+之后就可像下面这样导航到上面配置的 `shop` 页了：
+```js
+<Button title="Shop" $href="shop"/>
+```
+或者：
+```js
+this.$go({
+    url: 'shop',
+    type: 'modal'
+});
+```
+`layout` 根节点 `key` 会被当作页面的名字，因此不能与其它页面的名字重复。
 
 <br>
 
