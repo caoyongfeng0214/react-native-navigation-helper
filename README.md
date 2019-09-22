@@ -10,6 +10,8 @@
 
 [https://wix.github.io/react-native-navigation/#/docs/Installing](https://wix.github.io/react-native-navigation/#/docs/Installing) 。
 
+版本要求 >= 3.2.0，更低版本的没测试过，不确定是否兼容。
+
 2、使用 npm 安装 react-native-navigation-helper ：
 ```
 npm install react-native-navigation-helper --save
