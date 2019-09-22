@@ -6,18 +6,18 @@
 
 > ## Usage
 
-1、首先需安装 react-native-navigation ，可参考这个网址进行安装：
+1. 首先需安装 react-native-navigation ，可参考这个网址进行安装：
 
   [https://wix.github.io/react-native-navigation/#/docs/Installing](https://wix.github.io/react-native-navigation/#/docs/Installing) 。
 
   版本要求 >= 3.2.0，更低版本的没测试过，不确定是否兼容。
 
-2、使用 npm 安装 react-native-navigation-helper ：
+2. 使用 npm 安装 react-native-navigation-helper ：
   ```
   npm install react-native-navigation-helper --save
   ```
 
-3、修改项目的启动文件（默认为根目录下的 `./index.js`）：
+3. 修改项目的启动文件（默认为根目录下的 `./index.js`）：
 ```js
 import $Nav from 'react-native-navigation-helper';
 import App from './App';
