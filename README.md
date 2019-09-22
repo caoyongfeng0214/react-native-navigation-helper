@@ -2,6 +2,8 @@
 
 这个包是对 [react-native-navigation](https://github.com/wix/react-native-navigation) 的扩展，它能让你更轻松地在项目中使用 react-native-navigation 。
 
+遇到问题？请[反馈到这里](https://github.com/caoyongfeng0214/react-native-navigation-helper/issues)。
+
 <br>
 
 > ## Usage
