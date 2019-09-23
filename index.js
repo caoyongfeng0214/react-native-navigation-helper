@@ -2,7 +2,7 @@ import React from 'react';
 import { Navigation } from "react-native-navigation";
 import Screen from './Screen';
 import Page from './Page';
-import CMD from './command';
+// import CMD from './command';
 import Layout from './layout';
 
 let _merge = function(a, b){
@@ -73,8 +73,11 @@ if(!React.Component.$_ISCOMP){
                     //         }
                     //     }
                     // }
-                    let command = CMD.parse(props.$href, this._reactInternalFiber._debugOwner.stateNode);
-                    return <this.constructor {...props} $href_={props.$href} onPress={()=>$Nav.go(command)}/>;
+
+                    // let command = CMD.parse(props.$href, this._reactInternalFiber._debugOwner.stateNode);
+                    // return <this.constructor {...props} $href_={props.$href} onPress={()=>$Nav.go(command)}/>;
+
+                    return <this.constructor {...props} $href_={props.$href} onPress={()=>this._reactInternalFiber._debugOwner.stateNode.$go(props.$href)}/>;
                 }
             }
             return this;
@@ -140,6 +143,12 @@ let _defaultOptions = {
 
 $Nav.setDefaultOptions = function(options){
     Navigation.setDefaultOptions(options);
+};
+
+$Nav.setOptions = function(compId, options){
+    if(options){
+        Navigation.mergeOptions(compId, options);
+    }
 };
 
 let _regComp = function(k, comp){

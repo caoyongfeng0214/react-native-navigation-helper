@@ -49,7 +49,9 @@ let sideMenu = function(obj){
     if(_center){
         _centerComp = _findComp(_center);
         if(_centerComp){
-            _centerComp.id = 'sideMenuCenterComp_' + (_comp_id++);
+            if(!_centerComp.id){
+                _centerComp.id = 'sideMenuCenterComp_' + (_comp_id++);
+            }
         }
     }
     if(_leftComp){
@@ -59,7 +61,8 @@ let sideMenu = function(obj){
         if(!_leftComp.passProps.$layout){
             _leftComp.passProps.$layout = {};
         }
-        _leftComp.passProps.$layout.type = 'sideMenuLeft';
+        // _leftComp.passProps.$layout.type = 'sideMenuLeft';
+        _leftComp.passProps.$type = 'sideMenuLeft';
         if(_centerComp){
             _leftComp.passProps.$layout.centerId = _centerComp.id;
         }
@@ -71,7 +74,8 @@ let sideMenu = function(obj){
         if(!_rightComp.passProps.$layout){
             _rightComp.passProps.$layout = {};
         }
-        _rightComp.passProps.$layout.type = 'sideMenuRight';
+        // _rightComp.passProps.$layout.type = 'sideMenuRight';
+        _rightComp.passProps.$type = 'sideMenuRight';
         if(_centerComp){
             _rightComp.passProps.$layout.centerId = _centerComp.id;
         }
@@ -83,7 +87,8 @@ let sideMenu = function(obj){
         if(!_centerComp.passProps.$layout){
             _centerComp.passProps.$layout = {};
         }
-        _centerComp.passProps.$layout.type = 'sideMenuCenter';
+        // _centerComp.passProps.$layout.type = 'sideMenuCenter';
+        _centerComp.passProps.$type = 'sideMenuCenter';
         if(_leftComp){
             _centerComp.passProps.$layout.leftId = _leftComp.id;
         }

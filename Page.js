@@ -13,6 +13,10 @@ class Page extends React.Component{
 
         $Nav.Screen.push(this);
 
+        this.$setOptions = (ops)=>{
+            $Nav.setOptions(this.props.componentId, ops);
+        };
+
         if(props.$from && props.$from.command){
             if(props.$from.command.type == 'push'){
                 this.$close = () => {
@@ -60,7 +64,7 @@ class Page extends React.Component{
         }
 
         if(props.$layout){
-            if(props.$layout.type == 'sideMenuLeft'){
+            if(props.$type == 'sideMenuLeft'){
                 if(props.$layout.centerId){
                     this.$center = $Nav.Screen.get(props.$layout.centerId);
                     if(this.$center){
@@ -95,7 +99,7 @@ class Page extends React.Component{
                         this.$open();
                     }
                 };
-            } else if(props.$layout.type == 'sideMenuRight'){
+            } else if(props.$type == 'sideMenuRight'){
                 if(props.$layout.centerId){
                     this.$center = $Nav.Screen.get(props.$layout.centerId);
                     if(this.$center){
@@ -130,7 +134,7 @@ class Page extends React.Component{
                         this.$open();
                     }
                 };
-            } else if(props.$layout.type == 'sideMenuCenter'){
+            } else if(props.$type == 'sideMenuCenter'){
                 if(props.$layout.leftId){
                     this.$left = $Nav.Screen.get(props.$layout.leftId);
                     if(this.$left){
@@ -173,6 +177,30 @@ class Page extends React.Component{
                         }
                     };
                 }
+            }
+
+            if(props.$layout.bottomTabsId){
+                this.$tab = (idx)=>{
+                    $Nav.setOptions(props.$layout.bottomTabsId, {
+                        bottomTabs: {
+                            currentTabIndex: idx
+                        }
+                    });
+                };
+                this.$tabsShow = () => {
+                    $Nav.setOptions(props.$layout.bottomTabsId, {
+                        bottomTabs: {
+                            visible: true
+                        }
+                    });
+                };
+                this.$tabsHide = () => {
+                    $Nav.setOptions(props.$layout.bottomTabsId, {
+                        bottomTabs: {
+                            visible: false
+                        }
+                    });
+                };
             }
         }
 
