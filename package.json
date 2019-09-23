@@ -1,6 +1,6 @@
 {
   "name": "react-native-navigation-helper",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "easy to use react-native-navigation.",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,8 @@
     "url": "git+https://github.com/caoyongfeng0214/react-native-navigation-helper.git"
   },
   "keywords": [
-    "react-native-navigation"
+    "react-native-navigation",
+    "react-native-navigation-helper"
   ],
   "author": "me@caoyongfeng.com",
   "license": "ISC",
