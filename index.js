@@ -476,7 +476,7 @@ $Nav.go = function(command){
             }
         };
         if(BEFORENAV){
-            let check = BEFORENAV(command.opener, command.url);
+            let check = BEFORENAV(command.opener, command.url, $Nav.layout[command.url] || $Nav.pages[command.url]);
             if(check instanceof Promise){
                 check.then((o)=>{
                     if(o){
