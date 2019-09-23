@@ -287,6 +287,10 @@ this.$go({
 * #### $go(options)
 
   导航到指定页面。
+
+* #### $setOptions(options)
+
+  `options` 参数的值参考这里：[https://wix.github.io/react-native-navigation/#/docs/styling?id=options-object-format](https://wix.github.io/react-native-navigation/#/docs/styling?id=options-object-format)
   
 * #### props.$opener
 
@@ -321,6 +325,37 @@ class News extends $Nav.Page {
 
 export default News;
 ```
+
+<br>
+
+***
+
+> ## 路由拦截
+
+通过路由拦截，可阻止页面导航或改变导航页面。
+
+在 `$Nav.init(options)` 参数中配置 `beforeNav`，它是一个 function，在页面导航之前执行，它需返回 `Promise` 或 `真` 与 `假`。
+```js
+$Nav.init({
+    // ......
+    beforeNav: function(fromPage, to){
+        if(to == 'profile' && !isAuthorized()){
+            fromPage.$go({
+                url: 'login',
+                type: 'modal'
+            });
+            return false;
+        }
+        return true;
+    },
+    // ......
+});
+```
+`beforeNav` 会被传入两个参数，第一个参数 `fromPage` 是当前页面对象，第二个参数 `to` 是即将导航到的页面的名字。
+
+如果返回的不是 `Promise`，返回 `假` 则阻止导航。
+
+如果返回 `Promise`，则 `resolve` `假` 将阻止导航。
 
 <br>
 
@@ -413,32 +448,16 @@ class SideMenuLeft extends $Nav.Page {
 
 ***
 
-> ## 路由拦截
+> ## bottomTabs
 
-通过路由拦截，可阻止页面导航或改变导航页面。
-
-在 `$Nav.init(options)` 参数中配置 `beforeNav`，它是一个 function，在页面导航之前执行，它需返回 `Promise` 或 `真` 与 `假`。
+在 `bottomTabs` 的每个选项卡页面中，可用 `this.$tab(tabIndex)` 切换到指定的选项卡：
 ```js
-$Nav.init({
-    // ......
-    beforeNav: function(fromPage, to){
-        if(to == 'profile' && !isAuthorized()){
-            fromPage.$go({
-                url: 'login',
-                type: 'modal'
-            });
-            return false;
-        }
-        return true;
-    },
-    // ......
-});
+<Button title="tab1" onPress={()=>this.$tab(1)}/>
 ```
-`beforeNav` 会被传入两个参数，第一个参数 `fromPage` 是当前页面对象，第二个参数 `to` 是即将导航到的页面的名字。
-
-如果返回的不是 `Promise`，返回 `假` 则阻止导航。
-
-如果返回 `Promise`，则 `resolve` `假` 将阻止导航。
+可用 `this.$tabsHide()`、`this.$tabsShow()` 显示、隐藏底部的选项卡栏：
+```js
+<Button title="hide tabs" onPress={()=>this.$tabsHide()}/>
+```
 
 <br>
 
@@ -501,6 +520,38 @@ this.$go({
 `layout` 根节点 `key` 会被当作页面的名字，因此不能与其它页面的名字重复。
 
 对于打开的由多个页面组成的有基本布局的页面，无法用 `this.$close()` 关闭它，而应该用 `this.$closeWin()`。
+
+<br>
+
+***
+
+> ## $Nav.setOptions(componentId, options)
+
+与 `react-native-navigation` 中的 `Navigation.mergeOptions(componentId, options)` 等效。
+
+参考：[https://wix.github.io/react-native-navigation/#/docs/styling?id=setting-styles-dynamically](https://wix.github.io/react-native-navigation/#/docs/styling?id=setting-styles-dynamically) 。
+
+在一个页面中，
+```js
+this.$setOptions({
+    topBar: {
+        title: {
+            text: 'Hello CYF'
+        }
+    }
+});
+```
+与
+```js
+$Nav.setOptions(this.props.componentId, {
+    topBar: {
+        title: {
+            text: 'Hello CYF'
+        }
+    }
+});
+```
+是等效的。
 
 <br>
 
