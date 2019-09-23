@@ -290,7 +290,7 @@ this.$go({
 
 * #### $setOptions(options)
 
-  `options` 参数的值参考这里：[https://wix.github.io/react-native-navigation/#/docs/styling?id=options-object-format](https://wix.github.io/react-native-navigation/#/docs/styling?id=options-object-format)
+  `options` 参数参考这里：[https://wix.github.io/react-native-navigation/#/docs/styling?id=options-object-format](https://wix.github.io/react-native-navigation/#/docs/styling?id=options-object-format)
   
 * #### props.$opener
 
