@@ -529,7 +529,7 @@ this.$go({
 
 与 `react-native-navigation` 中的 `Navigation.mergeOptions(componentId, options)` 等效。
 
-`options` 参数的值参考这里：[https://wix.github.io/react-native-navigation/#/docs/styling?id=options-object-format](https://wix.github.io/react-native-navigation/#/docs/styling?id=options-object-format) 。
+参考：[https://wix.github.io/react-native-navigation/#/docs/styling?id=setting-styles-dynamically](https://wix.github.io/react-native-navigation/#/docs/styling?id=setting-styles-dynamically) 。
 
 在一个页面中，
 ```js
