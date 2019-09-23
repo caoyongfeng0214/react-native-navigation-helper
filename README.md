@@ -338,7 +338,7 @@ export default News;
 ```js
 $Nav.init({
     // ......
-    beforeNav: function(fromPage, to){
+    beforeNav: function(fromPage, to, toObj){
         if(to == 'profile' && !isAuthorized()){
             fromPage.$go({
                 url: 'login',
@@ -351,7 +351,7 @@ $Nav.init({
     // ......
 });
 ```
-`beforeNav` 会被传入两个参数，第一个参数 `fromPage` 是当前页面对象，第二个参数 `to` 是即将导航到的页面的名字。
+`beforeNav` 会被传入三个参数，第一个参数 `fromPage` 是当前页面对象，第二个参数 `to` 是即将导航到的页面的名字，第三个参数是即将导航到的页面的定义，它是 `$Nav.Page class` 或 `options.layout` 中定义的有基本布局的页面（参考后面的文档）。
 
 如果返回的不是 `Promise`，返回 `假` 则阻止导航。
 
