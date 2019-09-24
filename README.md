@@ -77,7 +77,7 @@ $Nav.init({
 import React from 'react';
 import {View, Text} from 'react-native';
 
-// $Nav 是全局变量，在此文件中不用 import
+// $Nav 是全局的，在此文件中不用 import
 class News extends $Nav.Page {
     constructor(props){
         super(props);
@@ -94,7 +94,7 @@ class News extends $Nav.Page {
 
 export default News;
 ```
-`$Nav` 是全局变量，除了在 `./index.js` ，在其它文件中不用 `import` 它。
+`$Nav` 是全局的，除了在 `./index.js` ，在其它文件中不用 `import` 它。
 
 可单独用一个文件来管理所有的页面，例如可以是 `./pages/_.js` ：
 ```js
@@ -239,7 +239,7 @@ $Nav.init({
         }}/>
 </View>
 ```
-上面的示例在导航后执行 `this.$close()` 关闭当前面。
+上面的示例在导航后执行 `this.$close()` 关闭当前页。
 
 如果希望在 `js` 代码中进行导航，则可用 `this.$go(cmd)`：
 ```js
